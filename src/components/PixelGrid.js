@@ -8,6 +8,7 @@ function PixelGrid({brushColor,clearSignal}){
 
 
   const[pixels,setPixels]=useState(Array(totalPixels).fill('#ffffff'));
+  const[isPainting, setIsPainting] = useState(false);
 
   const handlePaint = (index) => {
     const newPixels = [...pixels];
@@ -23,6 +24,10 @@ function PixelGrid({brushColor,clearSignal}){
 
   return (
     <div
+    onMouseDown={() => setIsPainting(true)}
+    onMouseUp={() => setIsPainting(false)}
+    onMouseLeave={() => setIsPainting(false)}
+
     style = {{
       display: 'grid',
       gridTemplateColumns: `repeat(${gridSize}, 20px)`,
@@ -35,6 +40,9 @@ function PixelGrid({brushColor,clearSignal}){
         key={index}
         color={color}
         onClick={() => handlePaint(index)}
+        onMouseEnter={() => {
+          if (isPainting) handlePaint(index);
+        }}
         />
       ))}
     </div>

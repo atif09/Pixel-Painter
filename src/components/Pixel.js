@@ -1,9 +1,11 @@
 import React from 'react';
 
-function Pixel ({color,onClick}) {
+function Pixel ({color,onClick,onMouseEnter}) {
   return (
     <div
+    
     onClick={onClick}
+    onMouseEnter={onMouseEnter}
     style={{
       width: '20px',
       height: '20px',
