@@ -13,7 +13,6 @@ function PixelGrid({ brushColor, clearSignal, setBrushColor, recentColors, gridS
     return savedGrid ? JSON.parse(savedGrid).slice(0, totalPixels) : Array(totalPixels).fill('#ffffff');
   });
   const [isPainting, setIsPainting] = useState(false);
-  const [history, setHistory] = useState([]);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(pixels));
@@ -38,7 +37,6 @@ function PixelGrid({ brushColor, clearSignal, setBrushColor, recentColors, gridS
   const handlePaint = (index) => {
     const newPixels = [...pixels];
     newPixels[index] = brushColor;
-    setHistory([...history, pixels]);
     setPixels(newPixels);
   };
 
@@ -58,51 +56,57 @@ function PixelGrid({ brushColor, clearSignal, setBrushColor, recentColors, gridS
   };
 
   return (
-    <div>
-      <div
-        ref={gridRef}
-        onMouseDown={() => setIsPainting(true)}
-        onMouseUp={() => setIsPainting(false)}
-        onMouseLeave={() => setIsPainting(false)}
-        style={{
-          display: 'grid',
-          gridTemplateColumns: `repeat(${gridSize}, 20px)`,
-          gap: '1px',
-          marginTop: '10px',
-        }}
-      >
-        {pixels.map((color, index) => (
-          <Pixel
-            key={index}
-            color={color}
-            onClick={() => handlePaint(index)}
-            onMouseEnter={() => {
-              if (isPainting) handlePaint(index);
-            }}
-          />
-        ))}
+    <div className="page-container">
+      <div className="grid-wrapper">
+        <div
+          ref={gridRef}
+          onMouseDown={() => setIsPainting(true)}
+          onMouseUp={() => setIsPainting(false)}
+          onMouseLeave={() => setIsPainting(false)}
+          className="pixel-grid"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: `repeat(${gridSize}, 20px)`,
+            gap: '1px',
+            border: '4px solid #35A5CD',
+            boxShadow: '0 0 15px #740CE3'
+          }}
+        >
+          {pixels.map((color, index) => (
+            <Pixel
+              key={index}
+              color={color}
+              onClick={() => handlePaint(index)}
+              onMouseEnter={() => {
+                if (isPainting) handlePaint(index);
+              }}
+            />
+          ))}
+        </div>
       </div>
 
-      <button onClick={exportAsImage} style={{ marginTop: '20px', padding: '10px', cursor: 'pointer' }}>
-        Export as PNG
-      </button>
+      <div className="controls-wrapper">
+        <button onClick={exportAsImage} style={{ marginTop: '20px', padding: '10px', cursor: 'pointer' }}>
+          Export as PNG
+        </button>
 
-      <div style={{ marginTop: '20px' }}>
-        <h3>Recent Colors:</h3>
-        <div style={{ display: 'flex', gap: '10px' }}>
-          {recentColors.map((color, index) => (
-            <div
-              key={index}
-              onClick={() => setBrushColor(color)}
-              style={{
-                width: '30px',
-                height: '30px',
-                backgroundColor: color,
-                border: '1px solid #000',
-                cursor: 'pointer',
-              }}
-            ></div>
-          ))}
+        <div style={{ marginTop: '20px' }}>
+          <h3>Recent Colors:</h3>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            {recentColors.map((color, index) => (
+              <div
+                key={index}
+                onClick={() => setBrushColor(color)}
+                style={{
+                  width: '30px',
+                  height: '30px',
+                  backgroundColor: color,
+                  border: '1px solid #000',
+                  cursor: 'pointer',
+                }}
+              ></div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

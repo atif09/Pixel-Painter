@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PixelGrid from './components/PixelGrid';
 
 function App() {
@@ -13,86 +13,130 @@ function App() {
     setTimeout(() => setClearSignal(false), 0);
   };
 
-  const updateRecentColors = (color) => {
-    if (!recentColors.includes(color)) {
-      const updatedColors = [color, ...recentColors].slice(0, 5);
-      setRecentColors(updatedColors);
+  useEffect(() => {
+    // Canvas setup for animated background
+    const canvas = document.getElementById('pixel-background');
+    const ctx = canvas.getContext('2d');
+    
+    // Set canvas to fill the entire screen
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Create many more pixels for better distribution
+    const pixels = [];
+    const pixelCount = 200; // Increased from 100
+    
+    for (let i = 0; i < pixelCount; i++) {
+      pixels.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 10 + 5,
+        dx: (Math.random() - 0.5) * 2, // Better velocity distribution
+        dy: (Math.random() - 0.5) * 2,
+        color: Math.random() > 0.5 ? '#740CE3' : '#35A5CD',
+      });
     }
-  };
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      pixels.forEach((pixel) => {
+        // Update position
+        pixel.x += pixel.dx;
+        pixel.y += pixel.dy;
+
+        // Bounce off edges
+        if (pixel.x <= 0 || pixel.x >= canvas.width - pixel.size) {
+          pixel.dx *= -1;
+          pixel.x = Math.max(0, Math.min(pixel.x, canvas.width - pixel.size));
+        }
+        
+        if (pixel.y <= 0 || pixel.y >= canvas.height - pixel.size) {
+          pixel.dy *= -1;
+          pixel.y = Math.max(0, Math.min(pixel.y, canvas.height - pixel.size));
+        }
+
+        // Draw pixel
+        ctx.fillStyle = pixel.color;
+        ctx.fillRect(pixel.x, pixel.y, pixel.size, pixel.size);
+      });
+      
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+    
+    return () => window.removeEventListener('resize', resizeCanvas);
+  }, []);
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
-      <h1>Pixel Painter</h1>
+    <div>
+      <canvas id="pixel-background" style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        zIndex: 0
+      }}></canvas>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <input
-          type="color"
-          value={brushColor}
-          onChange={(e) => {
-            setBrushColor(e.target.value);
-            updateRecentColors(e.target.value);
-          }}
-          style={{
-            padding: '10px',
-            border: '4px solid #000',
-            cursor: 'pointer',
-          }}
-        />
+      <div style={{ position: 'relative', zIndex: 1, padding: '20px', textAlign: 'center' }}>
+        <h1 className="app-title" style={{
+          fontFamily: "'Press Start 2P', cursive",
+          fontSize: "3rem",
+          textShadow: "4px 4px 0 #000, 0 0 15px #740CE3, 0 0 30px #35A5CD",
+          color: "#ffffff",
+          letterSpacing: "2px",
+          padding: "15px",
+          backgroundColor: "rgba(0, 0, 0, 0.4)",
+          border: "4px solid #35A5CD",
+          boxShadow: "0 0 15px #740CE3",
+          borderRadius: "8px"
+        }}>Pixel Painter</h1>
 
-        <button
-          onClick={handleClear}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: '#4caf50',
-            color: '#ffffff',
-            border: '4px solid #000',
-            cursor: 'pointer',
-          }}
-        >
-          Reset Grid
-        </button>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px', marginBottom: '20px' }}>
+          <input
+            type="color"
+            value={brushColor}
+            onChange={(e) => setBrushColor(e.target.value)}
+            style={{
+              padding: '10px',
+              border: '4px solid #000',
+              cursor: 'pointer',
+            }}
+          />
 
-        <button
-          onClick={() => setDarkMode(!darkMode)}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: darkMode ? '#4caf50' : '#000000',
-            color: darkMode ? '#000000' : '#ffffff',
-            border: '4px solid #000',
-            cursor: 'pointer',
-          }}
-        >
-          Toggle Dark Mode
-        </button>
+          <img
+            
+            src="/assets/buttons/reset-grid.png"
+            alt="Reset Grid"
+            onClick={handleClear}
+            className="reset-button"
+            style={{
+              cursor: 'pointer',
+              width: '150px',
+              transition: 'transform 0.3s ease', // Add transition inline
+            }}
+            onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.2)'} // Add direct JavaScript effect
+            onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}   // Reset on mouse out
+          />
+          
+
+          <PixelGrid
+            brushColor={brushColor}
+            clearSignal={clearSignal}
+            setBrushColor={setBrushColor}
+            recentColors={recentColors}
+            gridSize={gridSize}
+            darkMode={darkMode}
+          />
+        </div>
       </div>
-
-      <div style={{ marginBottom: '20px' }}>
-        <label htmlFor="gridSize" style={{ fontSize: '14px' }}>Grid Size:</label>
-        <select
-          id="gridSize"
-          value={gridSize}
-          onChange={(e) => setGridSize(Number(e.target.value))}
-          style={{
-            marginLeft: '10px',
-            padding: '10px',
-            border: '4px solid #000',
-            cursor: 'pointer',
-          }}
-        >
-          <option value={8}>8x8</option>
-          <option value={16}>16x16</option>
-          <option value={32}>32x32</option>
-        </select>
-      </div>
-
-      <PixelGrid
-        brushColor={brushColor}
-        clearSignal={clearSignal}
-        setBrushColor={setBrushColor}
-        recentColors={recentColors}
-        gridSize={gridSize}
-        darkMode={darkMode}
-      />
     </div>
   );
 }
