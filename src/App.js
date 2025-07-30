@@ -12,6 +12,17 @@ function App() {
     setClearSignal(true);
     setTimeout(() => setClearSignal(false), 0);
   };
+  
+  // Add this function to update brush color and recent colors
+  const updateBrushColor = (color) => {
+    setBrushColor(color);
+    
+    // Update recent colors - only add if it's not already there
+    if (!recentColors.includes(color)) {
+      // Add to front of array and keep only 5 most recent colors
+      setRecentColors(prevColors => [color, ...prevColors.filter(c => c !== color)].slice(0, 5));
+    }
+  };
 
   useEffect(() => {
     // Canvas setup for animated background
@@ -100,19 +111,42 @@ function App() {
         }}>Pixel Painter</h1>
 
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px', marginBottom: '20px' }}>
-          <input
-            type="color"
-            value={brushColor}
-            onChange={(e) => setBrushColor(e.target.value)}
-            style={{
-              padding: '10px',
-              border: '4px solid #000',
-              cursor: 'pointer',
-            }}
-          />
+          {/* Color Bucket Icon with Hidden Color Picker */}
+          <div style={{ position: 'relative' }}>
+            <img
+              src="/assets/buttons/color.bucket.png"
+              alt="Color Picker"
+              className="color-bucket-icon"
+              style={{
+                width: '140px',
+                cursor: 'pointer',
+                transition: 'transform 0.2s ease',
+              }}
+              onClick={(e) => {
+                // When clicked, programmatically click the hidden color input
+                document.getElementById('color-picker-input').click();
+              }}
+              onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.2)'}
+              onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+            />
+            
+            {/* Hidden color input that will be activated when the image is clicked */}
+            <input
+              id="color-picker-input"
+              type="color"
+              value={brushColor}
+              onChange={(e) => updateBrushColor(e.target.value)}
+              style={{
+                position: 'absolute',
+                opacity: 0,
+                width: '0.1px',
+                height: '0.1px',
+                overflow: 'hidden',
+              }}
+            />
+          </div>
 
           <img
-            
             src="/assets/buttons/reset-grid.png"
             alt="Reset Grid"
             onClick={handleClear}
@@ -120,17 +154,16 @@ function App() {
             style={{
               cursor: 'pointer',
               width: '150px',
-              transition: 'transform 0.3s ease', // Add transition inline
+              transition: 'transform 0.3s ease',
             }}
-            onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.2)'} // Add direct JavaScript effect
-            onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}   // Reset on mouse out
+            onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.2)'} 
+            onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}   
           />
           
-
           <PixelGrid
             brushColor={brushColor}
             clearSignal={clearSignal}
-            setBrushColor={setBrushColor}
+            setBrushColor={updateBrushColor}
             recentColors={recentColors}
             gridSize={gridSize}
             darkMode={darkMode}

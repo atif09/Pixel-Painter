@@ -34,10 +34,14 @@ function PixelGrid({ brushColor, clearSignal, setBrushColor, recentColors, gridS
     });
   }, [gridSize]);
 
+  // Update the handlePaint function to also update recent colors:
   const handlePaint = (index) => {
     const newPixels = [...pixels];
     newPixels[index] = brushColor;
     setPixels(newPixels);
+    
+    // Update recent colors via the parent component's function
+    setBrushColor(brushColor);
   };
 
   const exportAsImage = () => {
@@ -86,26 +90,51 @@ function PixelGrid({ brushColor, clearSignal, setBrushColor, recentColors, gridS
       </div>
 
       <div className="controls-wrapper">
-        <button onClick={exportAsImage} style={{ marginTop: '20px', padding: '10px', cursor: 'pointer' }}>
-          Export as PNG
-        </button>
+        {/* Replaced button with image */}
+        <img
+          src="/assets/buttons/export.png"
+          alt="Export as PNG"
+          onClick={exportAsImage}
+          className="export-button"
+          style={{
+            cursor: 'pointer',
+            width: '150px',
+            marginTop: '20px',
+            transition: 'transform 0.3s ease',
+          }}
+          onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.2)'}
+          onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+        />
 
         <div style={{ marginTop: '20px' }}>
-          <h3>Recent Colors:</h3>
-          <div style={{ display: 'flex', gap: '10px' }}>
-            {recentColors.map((color, index) => (
+          <h3 style={{ 
+            fontFamily: "'Press Start 2P', cursive",
+            color: '#ffffff',
+            textShadow: '2px 2px 0 #000',
+            marginBottom: '10px'
+          }}>Recent Colors:</h3>
+          <div className="recent-colors">
+            {recentColors && recentColors.length > 0 ? (recentColors.map((color, index) => (
               <div
                 key={index}
                 onClick={() => setBrushColor(color)}
+                className="recent-color"
                 style={{
+                  backgroundColor: color,
+                  border: '2px solid #fff',
+                  boxShadow: '0 0 5px rgba(0, 0, 0, 0.5)',
                   width: '30px',
                   height: '30px',
-                  backgroundColor: color,
-                  border: '1px solid #000',
-                  cursor: 'pointer',
+                  display: 'inline-block',
+                  marginRight: '5px'
                 }}
               ></div>
-            ))}
+            )) 
+          ) : (
+              <div style={{ color: '#fff',
+                textShadow: '2px 2px 0 #000, 0 0 10px #740CE3, 0 0 20px #35A5CD'
+               }}>No recent colors</div>
+            )}
           </div>
         </div>
       </div>

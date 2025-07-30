@@ -99,6 +99,28 @@ body {
   align-items: center;
 }
 
+/* Color bucket icon styling */
+.color-bucket-icon {
+  filter: drop-shadow(0 0 5px #740CE3);
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.color-bucket-icon:hover {
+  transform: scale(1.2);
+  filter: drop-shadow(0 0 10px #35A5CD);
+}
+
+/* Export button styling */
+.export-button {
+  filter: drop-shadow(0 0 5px #740CE3);
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.export-button:hover {
+  transform: scale(1.2);
+  filter: drop-shadow(0 0 10px #35A5CD);
+}
+
 /* Color picker recent colors */
 .recent-colors {
   display: flex;
@@ -109,13 +131,16 @@ body {
 .recent-color {
   width: 30px;
   height: 30px;
-  border: 4px solid #000;
+  
   cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 0 15px #740CE3;
+
 }
 
 .recent-color:hover {
   transform: scale(1.1);
-  box-shadow: 0 0 5px #4caf50;
+  box-shadow: 0 0 15px #35A5CD;
 }
 
 /* Image hover effects */
@@ -126,8 +151,3 @@ img {
 img:hover {
   transform: scale(1.1);
 }
-
-/* Note: We don't need the .reset-button class since
-   the regular img:hover handles the expansion effect */
-
-
