@@ -157,9 +157,13 @@ function App() {
                 alt="Color Picker"
                 className="color-bucket-icon"
                 style={{
-                  width: '140px',
+                  width: '150px',
                   cursor: 'pointer',
+                  transition: 'transform 0.3s ease, filter 0.3s ease',
                 }}
+                onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.2)'}
+                onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+
                 onClick={(e) => {
                   document.getElementById('color-picker-input').click();
                 }}
@@ -190,8 +194,11 @@ function App() {
                 cursor: currentStep > 0 ? 'pointer' : 'not-allowed',
                 width: '70px',
                 opacity: currentStep > 0 ? 1 : 0.5,
-                filter: 'drop-shadow(0 0 5px #740CE3)'
+                filter: 'drop-shadow(0 0 5px #740CE3)',
+                transition: 'transform 0.3s ease, filter 0.3s ease',
               }}
+            onMouseOver={(e) => currentStep > 0 ? e.currentTarget.style.transform = 'scale(1.2)' : null}
+            onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
             />
 
             {/* Redo button */}
@@ -204,8 +211,12 @@ function App() {
                 cursor: currentStep < history.length - 1 ? 'pointer' : 'not-allowed',
                 width: '70px',
                 opacity: currentStep < history.length - 1 ? 1 : 0.5,
-                filter: 'drop-shadow(0 0 5px #740CE3)'
+                filter: 'drop-shadow(0 0 5px #740CE3)',
+                transition: 'transform 0.3s ease, filter 0.3s ease',
               }}
+              onMouseOver={(e) => currentStep < history.length - 1 ? e.currentTarget.style.transform = 'scale(1.2)' : null}
+              onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+
             />
 
             {/* Reset button */}
@@ -217,7 +228,12 @@ function App() {
               style={{
                 cursor: 'pointer',
                 width: '150px',
+                transition: 'transform 0.3s ease, filter 0.3s ease',
+
               }}
+            onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.2)'}
+            onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+
             />
           </div>
           

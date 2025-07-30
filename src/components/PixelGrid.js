@@ -272,10 +272,12 @@ function PixelGrid({
           style={{
             cursor: 'pointer',
             width: '150px',
-            marginTop: '5px',
+            
             display: 'block',
             margin: '0 auto',
           }}
+        onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.2)'}
+        onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
         />
       </div>
     </div>
