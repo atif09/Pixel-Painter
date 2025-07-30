@@ -7,13 +7,17 @@ function App() {
   const [recentColors, setRecentColors] = useState([]);
   const [gridSize, setGridSize] = useState(16);
   const [darkMode, setDarkMode] = useState(false);
+  
+  // Add history state for undo/redo functionality
+  const [history, setHistory] = useState([]);
+  const [currentStep, setCurrentStep] = useState(-1);
 
   const handleClear = () => {
     setClearSignal(true);
     setTimeout(() => setClearSignal(false), 0);
   };
   
-  // Add this function to update brush color and recent colors
+  // Update brush color and recent colors
   const updateBrushColor = (color) => {
     setBrushColor(color);
     
@@ -21,6 +25,19 @@ function App() {
     if (!recentColors.includes(color)) {
       // Add to front of array and keep only 5 most recent colors
       setRecentColors(prevColors => [color, ...prevColors.filter(c => c !== color)].slice(0, 5));
+    }
+  };
+  
+  // Add undo and redo handlers
+  const handleUndo = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const handleRedo = () => {
+    if (currentStep < history.length - 1) {
+      setCurrentStep(currentStep + 1);
     }
   };
 
@@ -86,7 +103,7 @@ function App() {
   }, []);
 
   return (
-    <div>
+  <div className="app-container">
       <canvas id="pixel-background" style={{
         position: 'fixed',
         top: 0,
@@ -96,7 +113,17 @@ function App() {
         zIndex: 0
       }}></canvas>
 
-      <div style={{ position: 'relative', zIndex: 1, padding: '20px', textAlign: 'center' }}>
+      <div className="app-content" style={{ 
+        position: 'relative', 
+        zIndex: 1, 
+        padding: '20px', 
+        textAlign: 'center',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh'
+      }}>
         <h1 className="app-title" style={{
           fontFamily: "'Press Start 2P', cursive",
           fontSize: "3rem",
@@ -104,61 +131,95 @@ function App() {
           color: "#ffffff",
           letterSpacing: "2px",
           padding: "15px",
-          backgroundColor: "rgba(0, 0, 0, 0.4)",
-          border: "4px solid #35A5CD",
-          boxShadow: "0 0 15px #740CE3",
-          borderRadius: "8px"
+          animation: "pixel-glow 2s ease-in-out infinite alternate",
+          margin: "20px 0 40px 0"
         }}>Pixel Painter</h1>
 
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px', marginBottom: '20px' }}>
-          {/* Color Bucket Icon with Hidden Color Picker */}
-          <div style={{ position: 'relative' }}>
-            <img
-              src="/assets/buttons/color.bucket.png"
-              alt="Color Picker"
-              className="color-bucket-icon"
-              style={{
-                width: '140px',
-                cursor: 'pointer',
-                transition: 'transform 0.2s ease',
-              }}
-              onClick={(e) => {
-                // When clicked, programmatically click the hidden color input
-                document.getElementById('color-picker-input').click();
-              }}
-              onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.2)'}
-              onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
-            />
+        <div className="app-controls" style={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          gap: '20px', 
+          width: '100%',
+          maxWidth: '800px'
+        }}>
+          <div className="tool-controls" style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '30px',
+            width: '100%'
+          }}>
+            {/* Color Bucket with better centering */}
+            <div style={{ position: 'relative' }}>
+              <img
+                src="/assets/buttons/color.bucket.png"
+                alt="Color Picker"
+                className="color-bucket-icon"
+                style={{
+                  width: '140px',
+                  cursor: 'pointer',
+                }}
+                onClick={(e) => {
+                  document.getElementById('color-picker-input').click();
+                }}
+              />
+              
+              <input
+                id="color-picker-input"
+                type="color"
+                value={brushColor}
+                onChange={(e) => updateBrushColor(e.target.value)}
+                style={{
+                  position: 'absolute',
+                  opacity: 0,
+                  width: '0.1px',
+                  height: '0.1px',
+                  overflow: 'hidden',
+                }}
+              />
+            </div>
             
-            {/* Hidden color input that will be activated when the image is clicked */}
-            <input
-              id="color-picker-input"
-              type="color"
-              value={brushColor}
-              onChange={(e) => updateBrushColor(e.target.value)}
+            {/* Undo button */}
+            <img
+              src="/assets/buttons/undo.png"
+              alt="Undo"
+              onClick={handleUndo}
+              className="undo-button"
               style={{
-                position: 'absolute',
-                opacity: 0,
-                width: '0.1px',
-                height: '0.1px',
-                overflow: 'hidden',
+                cursor: currentStep > 0 ? 'pointer' : 'not-allowed',
+                width: '70px',
+                opacity: currentStep > 0 ? 1 : 0.5,
+                filter: 'drop-shadow(0 0 5px #740CE3)'
+              }}
+            />
+
+            {/* Redo button */}
+            <img
+              src="/assets/buttons/redo.png"
+              alt="Redo"
+              onClick={handleRedo}
+              className="redo-button"
+              style={{
+                cursor: currentStep < history.length - 1 ? 'pointer' : 'not-allowed',
+                width: '70px',
+                opacity: currentStep < history.length - 1 ? 1 : 0.5,
+                filter: 'drop-shadow(0 0 5px #740CE3)'
+              }}
+            />
+
+            {/* Reset button */}
+            <img
+              src="/assets/buttons/reset-grid.png"
+              alt="Reset Grid"
+              onClick={handleClear}
+              className="reset-button"
+              style={{
+                cursor: 'pointer',
+                width: '150px',
               }}
             />
           </div>
-
-          <img
-            src="/assets/buttons/reset-grid.png"
-            alt="Reset Grid"
-            onClick={handleClear}
-            className="reset-button"
-            style={{
-              cursor: 'pointer',
-              width: '150px',
-              transition: 'transform 0.3s ease',
-            }}
-            onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.2)'} 
-            onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}   
-          />
           
           <PixelGrid
             brushColor={brushColor}
@@ -166,12 +227,17 @@ function App() {
             setBrushColor={updateBrushColor}
             recentColors={recentColors}
             gridSize={gridSize}
+            setGridSize={setGridSize}
             darkMode={darkMode}
+            history={history}
+            setHistory={setHistory}
+            currentStep={currentStep}
+            setCurrentStep={setCurrentStep}
           />
         </div>
       </div>
     </div>
   );
 }
-
+    
 export default App;
