@@ -1,6 +1,6 @@
 ## Pixel Painter
  A retro-styled pixel art creator with glowing neon aesthetics.
-**Live on:** [https://pixel-painter.vercel.app](https://pixel-painter.vercel.app)
+# **Live on:** [https://pixel-painter.vercel.app](https://pixel-painter-puce.vercel.app/)
 
 ---
 
