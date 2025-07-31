@@ -11,15 +11,45 @@ function App() {
   // Add history state for undo/redo functionality
   const [history, setHistory] = useState([]);
   const [currentStep, setCurrentStep] = useState(-1);
+  const [isErasing, setIsErasing] = useState(false);
+  const [activeButton, setActiveButton] = useState(null);
+  const [hexInput, setHexInput] = useState('#000000');
 
   const handleClear = () => {
     setClearSignal(true);
     setTimeout(() => setClearSignal(false), 0);
+    setActiveButton('reset');
+    setTimeout(() => setActiveButton(null), 500);
+  };
+
+  const toggleEraser = () => {
+    setIsErasing(!isErasing);
+    setActiveButton(isErasing ? null : 'eraser');
+  };
+  
+  const handleHexChange = (e) => {
+    const value = e.target.value;
+    // Validate hex format
+    if (/^#[0-9A-Fa-f]{0,6}$/.test(value)) {
+      setHexInput(value);
+      
+      // Only update brush color when we have a complete hex code
+      if (value.length === 7) {
+        updateBrushColor(value);
+      }
+    }
   };
   
   // Update brush color and recent colors
   const updateBrushColor = (color) => {
     setBrushColor(color);
+    setHexInput(color);
+    
+    // If eraser was active, turn it off when selecting a color
+    if (isErasing) {
+      setIsErasing(false);
+      setActiveButton(null);
+    }
     
     // Update recent colors - only add if it's not already there
     if (!recentColors.includes(color)) {
@@ -32,13 +62,23 @@ function App() {
   const handleUndo = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
+      setActiveButton('undo');
+      setTimeout(() => setActiveButton(null), 500);
     }
   };
 
   const handleRedo = () => {
     if (currentStep < history.length - 1) {
       setCurrentStep(currentStep + 1);
+      setActiveButton('redo');
+      setTimeout(() => setActiveButton(null), 500);
     }
+  };
+
+  const handleColorPickerClick = () => {
+    document.getElementById('color-picker-input').click();
+    setActiveButton('color');
+    setTimeout(() => setActiveButton(null), 500);
   };
 
   useEffect(() => {
@@ -103,7 +143,7 @@ function App() {
   }, []);
 
   return (
-  <div className="app-container">
+    <div className="app-container">
       <canvas id="pixel-background" style={{
         position: 'fixed',
         top: 0,
@@ -147,26 +187,32 @@ function App() {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            gap: '30px',
-            width: '100%'
+            gap: '20px',
+            width: '100%',
+            marginBottom: '20px',
+            position: 'relative;'
           }}>
             {/* Color Bucket with better centering */}
-            <div style={{ position: 'relative' }}>
+            <div style={{ position: 'relative',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '70px'
+
+             }}>
               <img
                 src="/assets/buttons/color.bucket.png"
                 alt="Color Picker"
-                className="color-bucket-icon"
+                className={`color-bucket-icon ${activeButton === 'color' ? 'tool-button-active' : ''}`}
                 style={{
                   width: '150px',
                   cursor: 'pointer',
-                  transition: 'transform 0.3s ease, filter 0.3s ease',
+                  
+                  transition: 'transform 0.3s ease, filter 0.3s ease', // Match the reset button's transition
                 }}
+                onClick={handleColorPickerClick}
                 onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.2)'}
                 onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
-
-                onClick={(e) => {
-                  document.getElementById('color-picker-input').click();
-                }}
               />
               
               <input
@@ -183,13 +229,48 @@ function App() {
                 }}
               />
             </div>
+
+             <div style={{ 
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '70px', // Fixed height for alignment
+                marginLeft: '0',
+                marginRight: '0'
+              }}>
             
+            {/* Eraser Button */}
+            <img
+              src="/assets/buttons/eraser.png"
+              alt="Eraser"
+              onClick={toggleEraser}
+              className={`eraser-button ${isErasing ? 'active' : ''} ${activeButton === 'eraser' ? 'tool-button-active' : ''}`}
+              style={{
+                cursor: 'pointer',
+                width: '70px',
+                opacity: isErasing ? 1 : 0.8,
+                filter: isErasing ? 'drop-shadow(0 0 10px #35A5CD)' : 'drop-shadow(0 0 5px #740CE3)',
+                transition: 'transform 0.3s ease, filter 0.3s ease',
+                transform: isErasing ? 'scale(1.2)' : 'scale(1)'
+              }}
+              onMouseOver={(e) => !isErasing && (e.currentTarget.style.transform = 'scale(1.2)')}
+              onMouseOut={(e) => !isErasing && (e.currentTarget.style.transform = 'scale(1)')}
+            />
+            </div>
+
+            <div style={{ 
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '70px' // Fixed height for alignment
+              }}>
+
             {/* Undo button */}
             <img
               src="/assets/buttons/undo.png"
               alt="Undo"
               onClick={handleUndo}
-              className="undo-button"
+              className={`undo-button ${activeButton === 'undo' ? 'tool-button-active' : ''}`}
               style={{
                 cursor: currentStep > 0 ? 'pointer' : 'not-allowed',
                 width: '70px',
@@ -197,16 +278,23 @@ function App() {
                 filter: 'drop-shadow(0 0 5px #740CE3)',
                 transition: 'transform 0.3s ease, filter 0.3s ease',
               }}
-            onMouseOver={(e) => currentStep > 0 ? e.currentTarget.style.transform = 'scale(1.2)' : null}
-            onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
-            />
+              onMouseOver={(e) => currentStep > 0 ? e.currentTarget.style.transform = 'scale(1.2)' : null}
+              onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+            /></div>
+
+            <div style={{ 
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '70px' // Fixed height for alignment
+              }}>     
 
             {/* Redo button */}
             <img
               src="/assets/buttons/redo.png"
               alt="Redo"
               onClick={handleRedo}
-              className="redo-button"
+              className={`redo-button ${activeButton === 'redo' ? 'tool-button-active' : ''}`}
               style={{
                 cursor: currentStep < history.length - 1 ? 'pointer' : 'not-allowed',
                 width: '70px',
@@ -216,25 +304,29 @@ function App() {
               }}
               onMouseOver={(e) => currentStep < history.length - 1 ? e.currentTarget.style.transform = 'scale(1.2)' : null}
               onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+            /></div>
 
-            />
+            <div style={{ 
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '70px' // Fixed height for alignment
+              }}> 
 
             {/* Reset button */}
             <img
               src="/assets/buttons/reset-grid.png"
               alt="Reset Grid"
               onClick={handleClear}
-              className="reset-button"
+              className={`reset-button ${activeButton === 'reset' ? 'tool-button-active' : ''}`}
               style={{
                 cursor: 'pointer',
                 width: '150px',
                 transition: 'transform 0.3s ease, filter 0.3s ease',
-
               }}
-            onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.2)'}
-            onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
-
-            />
+              onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.2)'}
+              onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+            /></div>
           </div>
           
           <PixelGrid
@@ -249,11 +341,14 @@ function App() {
             setHistory={setHistory}
             currentStep={currentStep}
             setCurrentStep={setCurrentStep}
+            isErasing={isErasing}
+            hexInput={hexInput}
+            handleHexChange={handleHexChange}
           />
         </div>
       </div>
     </div>
   );
 }
-    
+
 export default App;

@@ -15,7 +15,10 @@ function PixelGrid({
   history,
   setHistory,
   currentStep,
-  setCurrentStep
+  setCurrentStep,
+  isErasing,
+  hexInput,
+  handleHexChange
 }) {
   const totalPixels = gridSize * gridSize;
   const gridRef = useRef(null);
@@ -80,17 +83,21 @@ function PixelGrid({
 
   const handlePaint = (index) => {
     const newPixels = [...pixels];
-    newPixels[index] = brushColor;
+    // If erasing is active, set pixel to white
+    // Otherwise use the selected brush color
+    newPixels[index] = isErasing ? '#ffffff' : brushColor;
     setPixels(newPixels);
     
-    // Update history when painting
+    // Update history when painting or erasing
     const newHistory = history.slice(0, currentStep + 1);
     newHistory.push([...newPixels]);
     setHistory(newHistory);
     setCurrentStep(newHistory.length - 1);
     
-    // Update recent colors via the parent component's function
-    setBrushColor(brushColor);
+    // Only update recent colors if not erasing
+    if (!isErasing) {
+      setBrushColor(brushColor);
+    }
   };
 
   const exportAsImage = () => {
@@ -263,6 +270,63 @@ function PixelGrid({
           )}
         </div>
 
+        {/* Add Hex Code Input */}
+        <div className="hex-input-container" style={{
+          marginBottom: '20px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '10px',
+          width: '100%',
+        }}>
+          <h3 style={{ 
+            fontFamily: "'Press Start 2P', cursive",
+            color: '#ffffff',
+            textShadow: '2px 2px 0 #000, 0 0 10px #740CE3, 0 0 20px #35A5CD',
+            marginBottom: '10px',
+            fontSize: '0.9rem'
+          }}>Hex Color:</h3>
+          
+          <input
+            type="text"
+            value={hexInput}
+            onChange={handleHexChange}
+            maxLength={7}
+            placeholder="#RRGGBB"
+            className="hex-input"
+            style={{
+              backgroundColor: '#333',
+              color: 'white',
+              border: '2px solid #740CE3',
+              padding: '8px 12px',
+              borderRadius: '4px',
+              fontFamily: "'Press Start 2P', cursive",
+              fontSize: '0.9rem',
+              width: '120px',
+              textAlign: 'center',
+              outline: 'none',
+              boxShadow: '0 0 10px #740CE3',
+              transition: 'all 0.3s ease',
+            }}
+            onFocus={(e) => e.target.style.boxShadow = '0 0 15px #35A5CD'}
+            onBlur={(e) => e.target.style.boxShadow = '0 0 10px #740CE3'}
+          />
+          
+          {/* Color Preview */}
+          <div 
+            className="hex-color-preview"
+            style={{
+              width: '30px',
+              height: '30px',
+              backgroundColor: hexInput,
+              border: '2px solid white',
+              borderRadius: '4px',
+              boxShadow: '0 0 15px #740CE3',
+              marginTop: '5px'
+            }}
+          />
+        </div>
+
         {/* Export button - centered */}
         <img
           src="/assets/buttons/export.png"
@@ -272,13 +336,12 @@ function PixelGrid({
           style={{
             cursor: 'pointer',
             width: '150px',
-            
+            marginTop: '5px',
             display: 'block',
             margin: '0 auto',
-            transition: 'transform 0.3s ease, filter 0.3s ease',
           }}
-        onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.2)'}
-        onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+          onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.2)'}
+          onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
         />
       </div>
     </div>

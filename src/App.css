@@ -1,7 +1,5 @@
-/* Full updated CSS with improved centering and symmetry */
 
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-
 
 body {
   margin: 0;
@@ -206,10 +204,30 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 30px;
+  gap: 20px !important;
   width: 100%;
   margin-bottom: 20px;
+  padding:10px 0;
 }
+
+.tool-controls > div {
+  display:flex;
+  align-items: center;
+  justify-content:center;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+@media (max-width: 768px) {
+  .tool-controls {
+    flex-wrap: wrap;
+  }
+  
+  .tool-controls > div {
+    margin: 5px 0;
+  }
+}
+
 
 /* Reset button styling */
 .reset-button {
@@ -297,38 +315,6 @@ img:hover {
   }
 }
 
-/* Add these styles to your existing CSS file */
-
-/* Undo and Redo buttons */
-.undo-button, .redo-button {
-  filter: drop-shadow(0 0 5px #740CE3);
-  transition: transform 0.2s ease, filter 0.2s ease, opacity 0.3s ease;
-}
-
-.undo-button:hover, .redo-button:hover {
-  transform: scale(1.2);
-  filter: drop-shadow(0 0 10px #35A5CD);
-}
-
-/* Update existing media query */
-@media (max-width: 480px) {
-  .app-title {
-    font-size: 1.5rem !important;
-  }
-  
-  .section-heading {
-    font-size: 0.8rem;
-  }
-  
-  .tool-controls {
-    gap: 15px;
-  }
-  
-  .color-bucket-icon, .reset-button, .export-button, .undo-button, .redo-button {
-    width: 120px;
-  }
-}
-
 /* Additional mobile optimization */
 @media (max-width: 480px) {
   .app-title {
@@ -343,7 +329,94 @@ img:hover {
     gap: 15px;
   }
   
-  .color-bucket-icon, .reset-button, .export-button {
+  .color-bucket-icon, .reset-button, .export-button, .undo-button, .redo-button, .eraser-button {
     width: 120px;
+  }
+}
+
+/* Add these styles to your existing CSS file */
+
+/* Undo and Redo buttons */
+.undo-button, .redo-button {
+  filter: drop-shadow(0 0 5px #740CE3);
+  transition: transform 0.2s ease, filter 0.2s ease, opacity 0.3s ease;
+}
+
+.undo-button:hover, .redo-button:hover {
+  transform: scale(1.2);
+  filter: drop-shadow(0 0 10px #35A5CD);
+}
+
+/* Eraser button styling */
+.eraser-button {
+  filter: drop-shadow(0 0 5px #740CE3);
+  transition: transform 0.3s ease, filter 0.3s ease, opacity 0.3s ease;
+}
+
+.eraser-button:hover {
+  transform: scale(1.2);
+  filter: drop-shadow(0 0 10px #35A5CD);
+}
+
+.eraser-button.active {
+  transform: scale(1.2);
+  filter: drop-shadow(0 0 15px #35A5CD);
+  opacity: 1;
+}
+
+/* Common button glow effect on click */
+
+
+
+
+/* Hex input styling */
+.hex-input-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 15px 0;
+  gap: 10px;
+}
+
+.hex-input {
+  background-color: #333;
+  color: white;
+  border: 2px solid #740CE3;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.9rem;
+  width: 120px;
+  text-align: center;
+  outline: none;
+  box-shadow: 0 0 10px #740CE3;
+  transition: all 0.3s ease;
+}
+
+.hex-input:focus {
+  box-shadow: 0 0 15px #35A5CD;
+  border-color: #35A5CD;
+}
+
+.hex-input::placeholder {
+  color: #888;
+  font-size: 0.7rem;
+}
+
+.hex-color-preview {
+  width: 30px;
+  height: 30px;
+  border: 2px solid white;
+  border-radius: 4px;
+  box-shadow: 0 0 15px #740CE3;
+  margin-top: 5px;
+}
+
+/* Adjust responsive layout */
+@media (max-width: 480px) {
+  .hex-input {
+    width: 100px;
+    font-size: 0.8rem;
+    padding: 6px 10px;
   }
 }
