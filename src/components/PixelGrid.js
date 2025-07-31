@@ -15,7 +15,8 @@ function PixelGrid({
   history,
   setHistory,
   currentStep,
-  setCurrentStep
+  setCurrentStep,
+  isErasing
 }) {
   const totalPixels = gridSize * gridSize;
   const gridRef = useRef(null);
@@ -80,17 +81,26 @@ function PixelGrid({
 
   const handlePaint = (index) => {
     const newPixels = [...pixels];
-    newPixels[index] = brushColor;
+
+    newPixels[index] = isErasing ? '#ffffff' : brushColor;
     setPixels(newPixels);
     
     // Update history when painting
     const newHistory = history.slice(0, currentStep + 1);
     newHistory.push([...newPixels]);
+    
+
+
     setHistory(newHistory);
     setCurrentStep(newHistory.length - 1);
+
+    if(!isErasing){
+      setBrushColor(brushColor);
+
+    }
     
     // Update recent colors via the parent component's function
-    setBrushColor(brushColor);
+    
   };
 
   const exportAsImage = () => {
