@@ -2,7 +2,7 @@
 # A retro-styled pixel art creator with glowing neon aesthetics.
 
 ## Project Structure
-<details> 
+
 pixel-painter/
 ├── public/
 │   ├── assets/
@@ -21,4 +21,4 @@ pixel-painter/
 │   ├── App.css
 │   ├── App.js
 │   └── index.js
-</details>
+
