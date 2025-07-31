@@ -54,19 +54,7 @@ pixel-painter/
 * CSS Animations
 * LocalStorage for persistence
 
----
 
-## How to Use
-
-1. **Select a Color**: Click on the color bucket icon and pick a color
-2. **Paint Pixels**: Click or drag on the grid to paint pixels
-3. **Erase Pixels**: Click the eraser icon to toggle eraser mode
-4. **Undo/Redo**: Use the arrow icons to undo or redo your actions
-5. **Reset Grid**: Click the "Reset Grid" button to clear your canvas
-6. **Change Grid Size**: Select from available grid size options
-7. **Export**: Click the export icon to save your art as a PNG file
-
----
 
 
 
