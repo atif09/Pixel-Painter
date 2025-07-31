@@ -1,5 +1,5 @@
 # Pixel Painter
-*A retro-styled pixel art creator with glowing neon theme.*
+**A retro-styled pixel art creator with glowing neon theme.**
 # **Live on:** [https://pixel-painter.vercel.app](https://pixel-painter-puce.vercel.app/)
 
 
