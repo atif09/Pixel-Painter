@@ -3,22 +3,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
 
-.eraser-button {
-  filter: drop-shadow(0 0 5px #740CE3);
-  transition: transform 0.3s ease, filter 0.3s ease !important;
-}
-
-.eraser-button:hover {
-  transform: scale(1.2) !important;
-  filter: drop-shadow(0 0 10px #35A5CD) !important;
-}
-
-.eraser-button.active {
-  transform: scale(1.2) !important;
-  filter: drop-shadow(0 0 15px #35A5CD) !important;
-}
-
-
 body {
   margin: 0;
   padding: 0;
@@ -222,36 +206,9 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 20px;
+  gap: 30px;
   width: 100%;
-  flex-wrap: wrap;
-  padding: 10px 0;
-  
-}
-
-.tool-controls img{
-  width:120px;
-  height:auto;
-}
-
-@media (max-width: 768px) {
-  .tool-controls { 
-    gap: 15px;
-  }
-
-  .tool-controls img {
-    width: 100px;
-  }
-}
-
-@media (max-width: 480px) {
-  .tool-controls {
-    gap: 10px;
-  }
-
-  .tool-controls img {
-    width:80px;
-  }
+  margin-bottom: 20px;
 }
 
 /* Reset button styling */

@@ -7,9 +7,6 @@ function App() {
   const [recentColors, setRecentColors] = useState([]);
   const [gridSize, setGridSize] = useState(16);
   const [darkMode, setDarkMode] = useState(false);
-  const[isErasing, setIsErasing] = useState(false);
-
-
   
   // Add history state for undo/redo functionality
   const [history, setHistory] = useState([]);
@@ -19,16 +16,9 @@ function App() {
     setClearSignal(true);
     setTimeout(() => setClearSignal(false), 0);
   };
-
-  const toggleEraser = () => {
-    setIsErasing(!isErasing);
-  };
   
   // Update brush color and recent colors
   const updateBrushColor = (color) => {
-    if(isErasing) { 
-      setIsErasing(false);
-    }
     setBrushColor(color);
     
     // Update recent colors - only add if it's not already there
@@ -132,8 +122,7 @@ function App() {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        minHeight: '100vh',
-        backgroundColor: '#000000',
+        minHeight: '100vh'
       }}>
         <h1 className="app-title" style={{
           fontFamily: "'Press Start 2P', cursive",
@@ -158,9 +147,8 @@ function App() {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            gap: '20px',
-            width: '100%',
-            maxWidth:'800px'
+            gap: '30px',
+            width: '100%'
           }}>
             {/* Color Bucket with better centering */}
             <div style={{ position: 'relative' }}>
@@ -169,7 +157,7 @@ function App() {
                 alt="Color Picker"
                 className="color-bucket-icon"
                 style={{
-                  width: '120px',
+                  width: '150px',
                   cursor: 'pointer',
                   transition: 'transform 0.3s ease, filter 0.3s ease',
                 }}
@@ -195,23 +183,6 @@ function App() {
                 }}
               />
             </div>
-
-            <img
-              src='assets/buttons/eraser.png'
-              alt='Eraser'
-              onClick={toggleEraser}
-              className={`eraser-button ${isErasing ? 'active' : ''} `}
-              style={{
-                cursor:'pointer',
-                width: '120px',
-                transition: 'transform 0.3s ease, filter 0.3s ease',
-                filter: isErasing ? 'drop-shadow (0 0 10px #35A5CD)' : 'drop-shadow( 0 0 5px #740CE3',
-                transform: isErasing ? 'scale(1.2)' : 'scale(1)'
-              }}
-              onMouseOver={(e) => !isErasing && (e.currentTarget.style.transform = 'scale(1.2')}
-              onMouseOut={(e) => !isErasing && (e.currentTarget.style.transform = 'scale(1)')}
-              />
-             
             
             {/* Undo button */}
             <img
@@ -221,7 +192,7 @@ function App() {
               className="undo-button"
               style={{
                 cursor: currentStep > 0 ? 'pointer' : 'not-allowed',
-                width: '120px',
+                width: '70px',
                 opacity: currentStep > 0 ? 1 : 0.5,
                 filter: 'drop-shadow(0 0 5px #740CE3)',
                 transition: 'transform 0.3s ease, filter 0.3s ease',
@@ -238,7 +209,7 @@ function App() {
               className="redo-button"
               style={{
                 cursor: currentStep < history.length - 1 ? 'pointer' : 'not-allowed',
-                width: '120px',
+                width: '70px',
                 opacity: currentStep < history.length - 1 ? 1 : 0.5,
                 filter: 'drop-shadow(0 0 5px #740CE3)',
                 transition: 'transform 0.3s ease, filter 0.3s ease',
@@ -256,7 +227,7 @@ function App() {
               className="reset-button"
               style={{
                 cursor: 'pointer',
-                width: '120px',
+                width: '150px',
                 transition: 'transform 0.3s ease, filter 0.3s ease',
 
               }}
@@ -278,7 +249,6 @@ function App() {
             setHistory={setHistory}
             currentStep={currentStep}
             setCurrentStep={setCurrentStep}
-            isErasing={isErasing}
           />
         </div>
       </div>
