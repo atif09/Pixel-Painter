@@ -2,7 +2,7 @@
  A retro-styled pixel art creator with glowing neon aesthetics.
 # **Live on:** [https://pixel-painter.vercel.app](https://pixel-painter-puce.vercel.app/)
 
----
+
 
 ## Project Structure
 
@@ -32,7 +32,7 @@ pixel-painter/
 
 </details>
 
----
+
 
 ## Features
 
@@ -45,7 +45,7 @@ pixel-painter/
 * Export creations as PNG images
 * Auto-save work in progress using local storage
 
----
+
 
 ## Technologies Used
 
