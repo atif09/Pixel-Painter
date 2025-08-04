@@ -49,9 +49,11 @@ pixel-painter/
 
 ## Technologies Used
 
+
 * React.js 
 * HTML Canvas
 * CSS Animations
+* Figma
 * LocalStorage for persistence
 
 
